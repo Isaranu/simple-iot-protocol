@@ -70,8 +70,7 @@ function readDataFromMongo(_readdatasize, res){
     var myreadcollection = myiotdb.collection('mycollection');
     myreadcollection.find({}).limit(Number(_readdatasize)).sort({recordTime: -1}, function(err, docs){
       console.log(JSON.stringify(docs));
-      var dataset = '{"dataset":'+ JSON.stringify(docs) +'}';
-      res.send(dataset);
+      res.jsonp(docs);
     });
   });
 }
