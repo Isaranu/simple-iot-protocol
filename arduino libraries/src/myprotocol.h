@@ -22,8 +22,7 @@ class myprotocol{
 
   private:
     const char *_ssid, *_passw, *_libversion;
-    float _val;
-    String _res;
+    String _str, _res, _val;
     bool _conn;
 };
 
