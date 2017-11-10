@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<head>
+</head>
+
+<body>
+  <div><canvas id="mychart" width="300" height="150"></canvas>
+</body>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="./src/js/Chart.min.js"></script>
+
+<script>
+
+var path, dataset=[], timeset=[];
+var chart_canvas = document.getElementById('mychart').getContext('2d');
+
+getdata(30);
+
+/* script สำหรับเรียกข้อมูลจาก app.js */
+function getdata(_datasize) {
+  path = 'http://35.198.221.246:4000/read/';
+  path += _datasize;
+  path += '?output=jsonp&callback=?';
+
+  $.getJSON(path,{
+  })
+  .done(function(data){
+    var output;
+    output = JSON.stringify(data);
+    var output_json = '{"dataset":' + output + '}';
+    console.log(output_json);
+    parsejson(output_json);
+  });
+}
+
+function parsejson(_txtParse){
+  var parsed = JSON.parse(_txtParse);
+  var parsed_obj = parsed.dataset;
+
+  var browser_unix = new Date();
+  var browser_time = new Date();
+
+  for(var i in parsed_obj){
+    dataset[i] = parsed_obj[i].data;
+    timeset[i] = new Date(Number(parsed_obj[i].recordTime));
+  }
+
+  console.log(dataset);
+  console.log(timeset);
+
+  drawchart(dataset, timeset);
+
+}
+
+function drawchart(_dataset,_timeset){
+
+    chart = new Chart(chart_canvas, {
+    type: 'bar',
+    data: {
+        labels: _timeset,
+        datasets: [{
+            label: 'Test API feelingwatt',
+            fill: true,
+            lineTension: 0.5,
+            backgroundColor: "rgba(89, 255, 194, 0.3)",
+            //xAxisID: "Time",
+            //yAxisID: "dataread",
+            borderColor: "rgb(89, 255, 194)", //"rgb(54, 175, 252)",
+            data: _dataset
+        }]
+    },
+    options: {
+        animation: false,
+        scales: {
+          xAxes: [{
+            ticks:{
+              fontSize : 9
+              }
+            }],
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Fw APIs'
+            }
+          }]
+        }
+      }
+    });
+  }
+</script>
+</html>
