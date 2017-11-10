@@ -103,7 +103,7 @@ String myprotocol::WriteDashboard(float val){
 }
 
 String myprotocol::getVersion(){
-  return pn_libversion;
+  return libversion;
 }
 
 /*
