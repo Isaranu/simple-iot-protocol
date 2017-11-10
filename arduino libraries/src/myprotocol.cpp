@@ -7,7 +7,7 @@ created : 2017.Nov.11
 
 #include "myprotocol.h"
 
-#define host "xx.xx.xx.xx" /* เลข IP address server ของ Google cloud platform */
+#define host "35.198.221.246"
 #define port 4000
 #define libversion "v1.0"
 
