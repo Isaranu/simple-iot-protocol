@@ -48,7 +48,7 @@ function writeDataToMongo(_savedata, res){
     var mywritecollection = myiotdb.collection('mycollection');
     mywritecollection.insert({
       data: Number(_savedata),
-      recordTime: new Date()
+      recordTime: new Date().getTime()
     }, function(err){
       if(err){
         console.log(err);
@@ -68,7 +68,7 @@ async function readdata(_datasize, res){
 function readDataFromMongo(_readdatasize, res){
   return new Promise(function(resolve,reject){
     var myreadcollection = myiotdb.collection('mycollection');
-    myreadcollection.find({}).limit(Number(_readdatasize)).sort({recordTime: -1}, function(err, docs){
+    myreadcollection.find({}).limit(Number(_readdatasize)).sort({recordTime: 1}, function(err, docs){
       console.log(JSON.stringify(docs));
       res.jsonp(docs);
     });
