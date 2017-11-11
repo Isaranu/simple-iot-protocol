@@ -11,6 +11,7 @@
 </head>
 <body>
   <h2 align="center" style="font-family: Helvetica">Simple Internet of Things Protocol</h2>
+  <p align="center" style="font-family: Helvetica">powered by <a href="https://www.iottweet.com">IoTtweet.com</a><p>
   <div><canvas id="mychart" width="700" height="450"></canvas></div>
 </body>
 
@@ -23,14 +24,16 @@ var path, dataset=[], timeset=[];
 var chart_canvas = document.getElementById('mychart').getContext('2d');
 
 getdata(30);
+drawchart(dataset, timeset);
 
 setInterval(function(){
   getdata(30);
+  chartupdate();
 },1000);
 
 /* script สำหรับเรียกข้อมูลจาก app.js */
 function getdata(_datasize) {
-  path = 'http://xxx.xxx.xxx.xxx:4000/read/'; /* ใส่ IP address server ของเราลงไปครับ */
+  path = 'http://xx.xxx.xxx.xx:4000/read/'; /* ใส่ IP address server ของเราลงไปครับ */
   path += _datasize;
   path += '?output=jsonp&callback=?';
 
@@ -56,8 +59,8 @@ function parsejson(_txtParse){
     dataset[i] = parsed_obj[i].data;
     timeset[i] = new Date(Number(parsed_obj[i].recordTime));
   }
-
-  drawchart(dataset, timeset);
+  dataset = re_numbering(dataset);
+  timeset = re_numbering(timeset);
 
 }
 
@@ -93,6 +96,26 @@ function drawchart(_dataset,_timeset){
         }
       }
     });
+
+    chart.options.scales.yAxes[0].ticks.min = 0;
+    chart.options.scales.yAxes[0].ticks.max = 100;
   }
+
+function chartupdate(){
+  chart.data.labels = timeset;
+  chart.data.datasets[0].data = dataset;
+  chart.update();
+}
+
+function re_numbering(_arr){
+  var _dummy_arr=[];
+  var _cnt_dwn = _arr.length-1;
+
+  for(var i=0; i<_arr.length; i++){
+    _dummy_arr[i] = _arr[_cnt_dwn];
+    _cnt_dwn--;
+  }
+  return _dummy_arr;
+}
 </script>
 </html>
