@@ -1,9 +1,17 @@
 <!DOCTYPE html>
+<html>
 <head>
+  <title>Simple IoT protocol</title>
+  <style>
+    div{
+      width: 50%;
+      margin: 0 auto;
+    }
+  </style>
 </head>
-
 <body>
-  <div><canvas id="mychart" width="300" height="150"></canvas>
+  <h2 align="center" style="font-family: Helvetica">Simple Internet of Things Protocol</h2>
+  <div><canvas id="mychart" width="700" height="450"></canvas></div>
 </body>
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -16,9 +24,13 @@ var chart_canvas = document.getElementById('mychart').getContext('2d');
 
 getdata(30);
 
+setInterval(function(){
+  getdata(30);
+},1000);
+
 /* script สำหรับเรียกข้อมูลจาก app.js */
 function getdata(_datasize) {
-  path = 'http://35.198.221.246:4000/read/';
+  path = 'http://35.198.221.246:4000/read/'; /* ใส่ IP address server ของเราลงไปครับ */
   path += _datasize;
   path += '?output=jsonp&callback=?';
 
@@ -45,9 +57,6 @@ function parsejson(_txtParse){
     timeset[i] = new Date(Number(parsed_obj[i].recordTime));
   }
 
-  console.log(dataset);
-  console.log(timeset);
-
   drawchart(dataset, timeset);
 
 }
@@ -55,17 +64,15 @@ function parsejson(_txtParse){
 function drawchart(_dataset,_timeset){
 
     chart = new Chart(chart_canvas, {
-    type: 'bar',
+    type: 'line',
     data: {
         labels: _timeset,
         datasets: [{
-            label: 'Test API feelingwatt',
+            label: 'my chart with my IoT protocol',
             fill: true,
             lineTension: 0.5,
-            backgroundColor: "rgba(89, 255, 194, 0.3)",
-            //xAxisID: "Time",
-            //yAxisID: "dataread",
-            borderColor: "rgb(89, 255, 194)", //"rgb(54, 175, 252)",
+            backgroundColor: "rgba(0, 255, 162, 0.3)",
+            borderColor: "rgb(83, 255, 192)",
             data: _dataset
         }]
     },
@@ -80,7 +87,7 @@ function drawchart(_dataset,_timeset){
           yAxes: [{
             scaleLabel: {
               display: true,
-              labelString: 'Fw APIs'
+              labelString: 'Data from IoT devices.'
             }
           }]
         }
