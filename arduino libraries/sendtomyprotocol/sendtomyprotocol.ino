@@ -7,8 +7,8 @@ Created : 2017.Nov.11
 
 #include <myprotocol.h>
 
-const char *ssid = "ssid";
-const char *passw = "password";
+const char *ssid = "your-ssid name";
+const char *passw = "your-password";
 
 String response; 
 float value;
@@ -34,9 +34,10 @@ void setup() {
 }
 
 void loop() {
-
-  value = 10.44;
-
+  
+  response = "";
+  
+  value = random(10,20);
   response = myiot.WriteDashboard(value);
   Serial.println(response);
   
