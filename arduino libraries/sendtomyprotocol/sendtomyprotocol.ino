@@ -37,7 +37,7 @@ void loop() {
   
   response = "";
   
-  value = random(10,20);
+  value = random(40,50);
   response = myiot.WriteDashboard(value);
   Serial.println(response);
   
