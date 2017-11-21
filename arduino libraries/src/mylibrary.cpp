@@ -10,9 +10,9 @@ String mylibrary::setLEDblink(int pin, float timeon, float timeoff){
 
   pinMode(_pin, OUTPUT);
 
-  digitalWrite(_pin, HIGH);
-  delay(_timeon*1000);
   digitalWrite(_pin, LOW);
+  delay(_timeon*1000);
+  digitalWrite(_pin, HIGH);
   delay(_timeoff*1000);
 
   _response = "blink from my library OK";
