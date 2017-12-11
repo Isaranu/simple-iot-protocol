@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DHT - Simple IoT protocol</title>
+  <style>
+    div{
+      width: 50%;
+      margin: 0 auto;
+    }
+    h2{
+      font-family: Helvetica;
+    }
+    p{
+      font-family: Helvetica;
+    }
+  </style>
+</head>
+<body>
+  <h2 align="center">Chart display Temperature and Humidity data from DHT sensor</h2>
+  <p align="center">Send data by Espino IoT development board.</p>
+  <p align="center">powered by <a href="https://www.iottweet.com">IoTtweet.com</a><p>
+  <div><canvas id="temp" width="700" height="450"></canvas></div>
+  <div><canvas id="humid" width="700" height="450"></canvas></div>
+</body>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="./src/js/Chart.min.js"></script>
+
+<script>
+
+var path, t_set=[], h_set=[], t_timeset=[], h_timeset=[];
+var temp_canvas = document.getElementById('temp').getContext('2d');
+var humid_canvas = document.getElementById('humid').getContext('2d');
+
+getdata(30);
+drawchart_temp(t_set, t_timeset);
+drawchart_humid(h_set, h_timeset);
+
+setInterval(function(){
+  getdata(30);
+  charttempupdate();
+  charthumidupdate();
+},1000);
+
+/* script สำหรับเรียกข้อมูลจาก app.js */
+function getdata(_datasize) {
+  path = 'http://xx.xxx.xxx.xxx:4000/readdht/'; /* ใส่ IP address server ของเราลงไปครับ */
+  path += _datasize;
+  path += '?output=jsonp&callback=?';
+
+  $.getJSON(path,{
+  })
+  .done(function(data){
+    var output;
+    output = JSON.stringify(data);
+    var output_json = '{"dataset":' + output + '}';
+    console.log(output_json);
+    parsejson(output_json);
+  });
+}
+
+function parsejson(_txtParse){
+  var parsed = JSON.parse(_txtParse);
+  var parsed_obj = parsed.dataset;
+
+  var browser_unix = new Date();
+  var browser_time = new Date();
+
+  for(var i in parsed_obj){
+    t_set[i] = parsed_obj[i].t;
+    h_set[i] = parsed_obj[i].h;
+    t_timeset[i] = new Date(Number(parsed_obj[i].recordTime));
+    h_timeset[i] = new Date(Number(parsed_obj[i].recordTime));
+  }
+
+  t_set = re_numbering(t_set);
+  t_timeset = re_numbering(t_timeset);
+  h_set = re_numbering(h_set);
+  h_timeset = re_numbering(h_timeset);
+
+}
+
+function drawchart_temp(_dataset,_timeset){
+
+    chart_temp = new Chart(temp_canvas, {
+    type: 'line',
+    data: {
+        labels: _timeset,
+        datasets: [{
+            label: 'Temperature from DHT',
+            fill: true,
+            lineTension: 0.5,
+            backgroundColor: "rgba(255, 0, 0, 0.3)",
+            borderColor: "rgb(255, 0, 0)",
+            data: _dataset
+        }]
+    },
+    options: {
+        animation: false,
+        scales: {
+          xAxes: [{
+            ticks:{
+              fontSize : 9
+              }
+            }],
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Celcuis.'
+            }
+          }]
+        }
+      }
+    });
+
+    chart_temp.options.scales.yAxes[0].ticks.min = 0;
+    chart_temp.options.scales.yAxes[0].ticks.max = 100;
+  }
+
+function charttempupdate(){
+  chart_temp.data.labels = t_timeset;
+  chart_temp.data.datasets[0].data = t_set;
+  chart_temp.update();
+}
+
+function drawchart_humid(_dataset,_timeset){
+
+    chart_humid = new Chart(humid_canvas, {
+    type: 'bar',
+    data: {
+        labels: _timeset,
+        datasets: [{
+            label: 'Humidity from DHT',
+            fill: true,
+            lineTension: 0.5,
+            backgroundColor: "rgba(0, 0, 255, 0.3)",
+            borderColor: "rgb(0, 0, 255)",
+            data: _dataset
+        }]
+    },
+    options: {
+        animation: false,
+        scales: {
+          xAxes: [{
+            ticks:{
+              fontSize : 9
+              }
+            }],
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: '% RH'
+            }
+          }]
+        }
+      }
+    });
+
+    chart_humid.options.scales.yAxes[0].ticks.min = 0;
+    chart_humid.options.scales.yAxes[0].ticks.max = 100;
+  }
+
+function charthumidupdate(){
+  chart_humid.data.labels = h_timeset;
+  chart_humid.data.datasets[0].data = h_set;
+  chart_humid.update();
+}
+
+function re_numbering(_arr){
+  var _dummy_arr=[];
+  var _cnt_dwn = _arr.length-1;
+
+  for(var i=0; i<_arr.length; i++){
+    _dummy_arr[i] = _arr[_cnt_dwn];
+    _cnt_dwn--;
+  }
+  return _dummy_arr;
+}
+</script>
+</html>
