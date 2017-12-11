@@ -99,6 +99,40 @@ String myprotocol::WriteDashboard(float val){
     }
 }
 
+String myprotocol::WriteDHT(float t, float h){
+
+    _t = String(t);
+    _h = String(h);
+
+    WiFiClient client;
+    if(client.connect(host, port)){
+
+      _str = "GET /writedht/";
+      _str += _t;
+      _str += "/";
+      _str += _h;
+      _str += " HTTP/1.1\r\n";
+      _str += "Host: ";
+      _str += host;
+      _str += ":";
+      _str += port;
+      _str += "\r\n";
+      _str += "Connection: keep-alive\r\n\r\n";
+
+      client.print(_str);
+
+      delay(LAG_TIME);
+
+      while(client.available()){
+        _res = client.readStringUntil('\r');
+      }
+
+      return _res;
+    }else{
+      //Nothing..
+    }
+}
+
 String myprotocol::getVersion(){
   return libversion;
 }
