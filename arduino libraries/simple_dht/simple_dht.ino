@@ -1,6 +1,7 @@
+#include "ESP8266WiFi.h"
 #include "DHT.h"
 
-#define DHTPIN 1
+#define DHTPIN 4 // GPIO4 pin
 #define DHTTYPE DHT22
 DHT dht(DHTPIN, DHTTYPE);
 
