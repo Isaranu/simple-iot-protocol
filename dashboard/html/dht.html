@@ -25,6 +25,7 @@
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script src="./src/js/Chart.min.js"></script>
+<script src="./src/js/moment.js"></script>
 
 <script>
 
@@ -69,8 +70,8 @@ function parsejson(_txtParse){
   for(var i in parsed_obj){
     t_set[i] = parsed_obj[i].t;
     h_set[i] = parsed_obj[i].h;
-    t_timeset[i] = new Date(Number(parsed_obj[i].recordTime));
-    h_timeset[i] = new Date(Number(parsed_obj[i].recordTime));
+    t_timeset[i] = moment(new Date(Number(parsed_obj[i].recordTime))).format('MMM Do YY, h:mm:ss a');
+    h_timeset[i] = moment(new Date(Number(parsed_obj[i].recordTime))).format('MMM Do YY, h:mm:ss a');
   }
 
   t_set = re_numbering(t_set);
