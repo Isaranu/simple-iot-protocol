@@ -23,6 +23,7 @@
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script src="./src/js/Chart.min.js"></script>
+<script src="./src/js/moment.js"></script>
 
 <script>
 
@@ -39,7 +40,7 @@ setInterval(function(){
 
 /* script สำหรับเรียกข้อมูลจาก app.js */
 function getdata(_datasize) {
-  path = 'http://xx.xxx.xxx.xx:4000/read/'; /* ใส่ IP address server ของเราลงไปครับ */
+  path = 'http://xx.xxx.xxx.xxx:4000/read/'; /* ใส่ IP address server ของเราลงไปครับ */
   path += _datasize;
   path += '?output=jsonp&callback=?';
 
@@ -63,7 +64,7 @@ function parsejson(_txtParse){
 
   for(var i in parsed_obj){
     dataset[i] = parsed_obj[i].data;
-    timeset[i] = new Date(Number(parsed_obj[i].recordTime));
+    timeset[i] = moment(new Date(Number(parsed_obj[i].recordTime))).format('MMM Do YY, h:mm:ss a');
   }
   dataset = re_numbering(dataset);
   timeset = re_numbering(timeset);
