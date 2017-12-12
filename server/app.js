@@ -87,7 +87,7 @@ async function readdata(_datasize, res){
 function readDataFromMongo(_readdatasize, res){
   return new Promise(function(resolve,reject){
     var myreadcollection = myiotdb.collection('mycollection');
-    myreadcollection.find({}).limit(Number(_readdatasize)).sort({recordTime: 1}, function(err, docs){
+    myreadcollection.find({}).limit(Number(_readdatasize)).sort({recordTime: -1}, function(err, docs){
       //console.log(JSON.stringify(docs));
       res.jsonp(docs);
     });
