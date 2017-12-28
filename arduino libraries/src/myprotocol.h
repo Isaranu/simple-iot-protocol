@@ -10,7 +10,6 @@ created : 2017.Nov.11
 
 #include "Arduino.h"
 #include "ESP8266WiFi.h"
-#include "ArduinoJson.h"
 
 class myprotocol{
 
