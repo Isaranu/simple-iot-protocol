@@ -9,10 +9,12 @@ const express = require('express');
 const app = express();
 var port = 4000;
 
-var mongojs = require('mongojs');
 var Promise = require('promise');
+
+var mongojs = require('mongojs');
 var myiotdb = mongojs('myiotdb');
 var dhtdb = mongojs('dht');
+
 var devid, data, datasize, dataset='';
 var t, h;
 
