@@ -15,7 +15,7 @@ var mongojs = require('mongojs');
 var myiotdb = mongojs('myiotdb');
 var dhtdb = mongojs('dht');
 
-var devid, data, datasize, dataset='';
+var data, datasize, dataset='';
 var t, h;
 
 app.get('/', function (req, res) {
