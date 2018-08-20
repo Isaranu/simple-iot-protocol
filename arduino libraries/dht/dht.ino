@@ -36,7 +36,7 @@ void setup() {
      }
 
   response = myiot.sayhi();
-  Serial.print("Are you ready ? :" + String(response)); 
+  Serial.println("Are you ready ? :" + String(response)); 
   
   response = myiot.getVersion();
   Serial.println("myprotocol library version is " + String(response));  
