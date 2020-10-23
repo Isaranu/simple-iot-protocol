@@ -40,7 +40,7 @@ setInterval(function(){
   getdata(30);
   charttempupdate();
   charthumidupdate();
-},1000);
+},2000);
 
 /* script สำหรับเรียกข้อมูลจาก app.js */
 function getdata(_datasize) {
@@ -48,36 +48,18 @@ function getdata(_datasize) {
   path += _datasize;
   path += '?output=jsonp&callback=?';
 
-  $.getJSON(path,{
-  })
-  .done(function(data){
-    var output;
-    output = JSON.stringify(data);
-    var output_json = '{"dataset":' + output + '}';
-    console.log(output_json);
-    parsejson(output_json);
+  $.getJSON(path,{}).then(function(log){
+    
+    console.log(log);
+
+    /* Formatting data */
+    for(var i in log){
+      t_set[i] = Number(log[i].t);
+      h_set[i] = Number(log[i].h);
+      t_timeset[i] = moment(new Date(Number(log[i].recordTime))).format('MMM Do YY, h:mm:ss a');
+      h_timeset[i] = moment(new Date(Number(log[i].recordTime))).format('MMM Do YY, h:mm:ss a');
+    }
   });
-}
-
-function parsejson(_txtParse){
-  var parsed = JSON.parse(_txtParse);
-  var parsed_obj = parsed.dataset;
-
-  //var browser_unix = new Date();
-  //var browser_time = new Date();
-
-  for(var i in parsed_obj){
-    t_set[i] = parsed_obj[i].t;
-    h_set[i] = parsed_obj[i].h;
-    t_timeset[i] = moment(new Date(Number(parsed_obj[i].recordTime))).format('MMM Do YY, h:mm:ss a');
-    h_timeset[i] = moment(new Date(Number(parsed_obj[i].recordTime))).format('MMM Do YY, h:mm:ss a');
-  }
-
-  t_set = re_numbering(t_set);
-  t_timeset = re_numbering(t_timeset);
-  h_set = re_numbering(h_set);
-  h_timeset = re_numbering(h_timeset);
-
 }
 
 function drawchart_temp(_dataset,_timeset){
@@ -107,14 +89,15 @@ function drawchart_temp(_dataset,_timeset){
             scaleLabel: {
               display: true,
               labelString: 'Celcuis.'
+            },
+            ticks:{
+              min: 0,
+              max: 100
             }
           }]
         }
       }
     });
-
-    chart_temp.options.scales.yAxes[0].ticks.min = 0;
-    chart_temp.options.scales.yAxes[0].ticks.max = 100;
   }
 
 function charttempupdate(){
@@ -150,14 +133,16 @@ function drawchart_humid(_dataset,_timeset){
             scaleLabel: {
               display: true,
               labelString: '% RH'
+            },
+            ticks:{
+              min: 0,
+              max: 100
             }
           }]
         }
       }
     });
 
-    chart_humid.options.scales.yAxes[0].ticks.min = 0;
-    chart_humid.options.scales.yAxes[0].ticks.max = 100;
   }
 
 function charthumidupdate(){
@@ -166,16 +151,6 @@ function charthumidupdate(){
   chart_humid.update();
 }
 
-function re_numbering(_arr){
-  var _dummy_arr=[];
-  var _cnt_dwn = _arr.length-1;
-
-  for(var i=0; i<_arr.length; i++){
-    _dummy_arr[i] = _arr[_cnt_dwn];
-    _cnt_dwn--;
-  }
-  return _dummy_arr;
-}
 </script>
 </body>
 </html>
