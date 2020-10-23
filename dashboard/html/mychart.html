@@ -35,38 +35,24 @@ drawchart(dataset, timeset);
 setInterval(function(){
   getdata(30);
   chartupdate();
-},1000);
+},2000);
 
-/* script สำหรับเรียกข้อมูลจาก app.js */
+/* script สำหรับเรียกข้อมูลจาก app.js / Database */
 function getdata(_datasize) {
   path = 'http://xx.xxx.xxx.xxx:4000/read/'; /* ใส่ IP address server ของเราลงไปครับ */
   path += _datasize;
   path += '?output=jsonp&callback=?';
 
-  $.getJSON(path,{
-  })
-  .done(function(data){
-    var output;
-    output = JSON.stringify(data);
-    var output_json = '{"dataset":' + output + '}';
-    console.log(output_json);
-    parsejson(output_json);
+  $.getJSON(path, {}).then(function(log){
+    
+    console.log(log);
+    
+    /* Formatting data */
+    for(var i in log){
+      dataset[i] = Number(log[i].data);
+      timeset[i] = moment(new Date(Number(log[i].recordTime))).format('MMM Do YY, h:mm:ss a');
+    }
   });
-}
-
-function parsejson(_txtParse){
-  var parsed = JSON.parse(_txtParse);
-  var parsed_obj = parsed.dataset;
-
-  //var browser_unix = new Date();
-  //var browser_time = new Date();
-
-  for(var i in parsed_obj){
-    dataset[i] = parsed_obj[i].data;
-    timeset[i] = moment(new Date(Number(parsed_obj[i].recordTime))).format('MMM Do YY, h:mm:ss a');
-  }
-  dataset = re_numbering(dataset);
-  timeset = re_numbering(timeset);
 
 }
 
@@ -77,7 +63,7 @@ function drawchart(_dataset,_timeset){
     data: {
         labels: _timeset,
         datasets: [{
-            label: 'my chart with my IoT protocol',
+            label: 'My chart with my IoT protocol',
             fill: true,
             lineTension: 0.5,
             backgroundColor: "rgba(0, 255, 162, 0.3)",
@@ -97,14 +83,16 @@ function drawchart(_dataset,_timeset){
             scaleLabel: {
               display: true,
               labelString: 'Data from IoT devices.'
+            },
+            ticks:{
+              min: 0,
+              max: 100
             }
           }]
         }
       }
     });
 
-    chart.options.scales.yAxes[0].ticks.min = 0;
-    chart.options.scales.yAxes[0].ticks.max = 100;
   }
 
 function chartupdate(){
@@ -113,16 +101,6 @@ function chartupdate(){
   chart.update();
 }
 
-function re_numbering(_arr){
-  var _dummy_arr=[];
-  var _cnt_dwn = _arr.length-1;
-
-  for(var i=0; i<_arr.length; i++){
-    _dummy_arr[i] = _arr[_cnt_dwn];
-    _cnt_dwn--;
-  }
-  return _dummy_arr;
-}
 </script>
 </body>
 </html>
