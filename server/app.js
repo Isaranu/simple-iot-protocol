@@ -3,6 +3,7 @@ app.js สำหรับสร้าง Protocol IoT device.
 code.isaranu.com
 coder : isaranu
 created : 2017.Nov.11
+updated : 2020.Oct.23
 */
 
 const express = require('express');
@@ -15,41 +16,33 @@ var mongojs = require('mongojs');
 var myiotdb = mongojs('myiotdb');
 var dhtdb = mongojs('dht');
 
-var data, datasize, dataset='';
+var data, datasize;
 var t, h;
 
 app.get('/', function (req, res) {
-  res.send("my iot Protocol ready !");
+  res.send("My IoT Protocol ready !");
 });
 
 app.get('/write/:data', function (req, res) {
-  var strParseWriteReq = JSON.stringify(req.params);
-  var strWriteReq = JSON.parse(strParseWriteReq);
-  data = strWriteReq.data;
+  data = req.params.data;
   writedata(data, res);
 });
 
 app.get('/read/:datasize', function (req, res) {
-  var strParseReadReq = JSON.stringify(req.params);
-  var strReadReq = JSON.parse(strParseReadReq);
-  datasize = strReadReq.datasize;
+  datasize = req.params.datasize;
   readdata(datasize, res);
 });
 
 /* For DHT write */
 app.get('/writedht/:t/:h', function (req, res) {
-  var strParseWriteReq = JSON.stringify(req.params);
-  var strWriteReq = JSON.parse(strParseWriteReq);
-  t = strWriteReq.t;
-  h = strWriteReq.h;
+  t = req.params.t;
+  h = req.params.h;
   writeDHT(t, h, res);
 });
 
 /* For DHT data read */
 app.get('/readdht/:datasize', function (req, res) {
-  var strParseReadReq = JSON.stringify(req.params);
-  var strReadReq = JSON.parse(strParseReadReq);
-  datasize = strReadReq.datasize;
+  datasize = req.params.datasize;
   readDHT(datasize, res);
 });
 
@@ -59,7 +52,6 @@ app.listen(port, function () {
 });
 
 /* -- ASYNC / AWAIT function -- */
-
 async function writedata(_data, res){
   await writeDataToMongo(_data, res);
 }
@@ -90,8 +82,7 @@ function readDataFromMongo(_readdatasize, res){
   return new Promise(function(resolve,reject){
     var myreadcollection = myiotdb.collection('mycollection');
     myreadcollection.find({}).limit(Number(_readdatasize)).sort({recordTime: -1}, function(err, docs){
-      //console.log(JSON.stringify(docs));
-      res.jsonp(docs);
+      res.jsonp(docs.reverse());
     });
   });
 }
@@ -127,8 +118,7 @@ function readDHTFromMongo(_readdatasize, res){
   return new Promise(function(resolve,reject){
     var dhtcollection = dhtdb.collection('dhtcol');
     dhtcollection.find({}).limit(Number(_readdatasize)).sort({recordTime: -1}, function(err, docs){
-      //console.log(JSON.stringify(docs));
-      res.jsonp(docs);
+      res.jsonp(docs.reverse());
     });
   });
 }
